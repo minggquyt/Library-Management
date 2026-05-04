@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yêu cầu đăng ký thẻ bạn đọc</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+        .form-wrapper { max-width: 760px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="../index.html"><i class="fas fa-book-reader me-2"></i>IUH LIBRARY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="reader-card.html">Yêu cầu thẻ bạn đọc</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html">Tra cứu sách</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="form-wrapper">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="fw-bold mb-2">Yêu cầu đăng ký thẻ bạn đọc</h3>
+                    <p class="text-muted mb-4">Vui lòng điền đầy đủ thông tin: họ tên, email, MSSV để gửi yêu cầu đăng ký thẻ.</p>
+
+                    <form id="readerCardForm" novalidate>
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" id="email" class="form-control" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-4">
+                            <label for="studentId" class="form-label">MSSV <span class="text-danger">*</span></label>
+                            <input type="text" id="studentId" class="form-control" placeholder="Ví dụ: 21001234">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
+                            <a href="../index.html" class="btn btn-outline-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="notifyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="notifyTitle">Thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-2">
+                    <p class="mb-0" id="notifyMessage"></p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const form = document.getElementById("readerCardForm");
+        const notifyTitle = document.getElementById("notifyTitle");
+        const notifyMessage = document.getElementById("notifyMessage");
+        const notifyModal = new bootstrap.Modal(document.getElementById("notifyModal"));
+
+        const showMessage = (title, message) => {
+            notifyTitle.textContent = title;
+            notifyMessage.textContent = message;
+            notifyModal.show();
+        };
+
+        const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const isValidStudentId = (mssv) => /^\d{8,12}$/.test(mssv);
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const studentId = document.getElementById("studentId").value.trim();
+
+            if (!fullName || !email || !studentId) {
+                showMessage("Dữ liệu không hợp lệ", "Sai dữ liệu bắt buộc phải nhập. Vui lòng kiểm tra lại thông tin.");
+                return;
+            }
+
+            if (!isValidEmail(email) || !isValidStudentId(studentId)) {
+                showMessage("Dữ liệu không hợp lệ", "Email hoặc MSSV không đúng định dạng. Vui lòng nhập lại.");
+                return;
+            }
+
+            const storageKey = "readerCardRequests";
+            const requests = JSON.parse(localStorage.getItem(storageKey) || "[]");
+            const existed = requests.some((req) =>
+                req.email.toLowerCase() === email.toLowerCase() || req.studentId === studentId
+            );
+
+            if (existed) {
+                showMessage("Đăng ký thất bại", "Bạn đã đăng ký thẻ bạn đọc trước đó, không thể đăng ký lại.");
+                return;
+            }
+
+            requests.push({
+                fullName,
+                email,
+                studentId,
+                status: "pending",
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem(storageKey, JSON.stringify(requests));
+
+            form.reset();
+            showMessage("Gửi yêu cầu thành công", "Yêu cầu đăng ký thẻ bạn đọc đã được gửi. Vui lòng chờ duyệt.");
+        });
+    </script>
+</body>
+</html>
