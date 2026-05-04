@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thống Kê & Báo Cáo - CEIN LIBRARY</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (Icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chart.js for beautiful charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8f9fa;
+      }
+      .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      }
+      footer {
+        background-color: #212529;
+        color: white;
+        padding: 40px 0;
+      }
+
+      .admin-content {
+        min-height: 80vh;
+      }
+      .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+        background: white;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .icon-shape {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+      }
+
+      .avatar-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+      }
+
+      /* Table Customization */
+      .table-custom {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 15px;
+      }
+      .table td {
+        vertical-align: middle;
+        padding: 15px;
+        border-color: #f1f3f5;
+      }
+
+      .book-rank {
+        width: 25px;
+        height: 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+      .rank-1 {
+        background-color: #ffd700;
+        color: #000;
+      }
+      .rank-2 {
+        background-color: #c0c0c0;
+        color: #000;
+      }
+      .rank-3 {
+        background-color: #cd7f32;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar Admin -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+      <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold text-primary" href="#"
+          ><i class="fas fa-book-reader me-2"></i>IUH LIBRARY</a
+        >
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto ms-4">
+            <li class="nav-item">
+              <a class="nav-link" href="admin-books.html">Quản lý kho sách</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin-accounts.html">Quản lý nhân sự</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin-config.html">Cấu hình tham số</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active fw-bold text-primary" href="#"
+                >Thống kê & Báo cáo</a
+              >
+            </li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+              <button
+                class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 rounded-pill px-3 py-1 border-0"
+                type="button"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="https://ui-avatars.com/api/?name=Quý+Nguyễn&background=fff&color=0d6efd"
+                  alt="Avatar"
+                  class="avatar-circle"
+                />
+                <span class="fw-semibold small">Admin Q.Nguyễn</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                <li>
+                  <a class="dropdown-item py-2" href="#"
+                    ><i class="fas fa-sign-out-alt me-2 text-danger"></i>Đăng
+                    xuất</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container px-4 py-5 admin-content">
+      <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Báo cáo tổng quan</h2>
+          <p class="text-muted small mb-0">
+            Thống kê hoạt động thư viện tính đến ngày 04/05/2026
+          </p>
+        </div>
+        <button class="btn btn-outline-primary btn-sm rounded-pill px-3">
+          <i class="fas fa-download me-2"></i>Xuất Excel
+        </button>
+      </div>
+
+      <!-- 4 Stats Cards -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-3">
+          <div class="card stat-card p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="text-muted small fw-bold mb-1">TỔNG ĐẦU SÁCH</p>
+                <h3 class="fw-bold mb-0">12,450</h3>
+              </div>
+              <div class="icon-shape bg-primary bg-opacity-10 text-primary">
+                <i class="fas fa-book"></i>
+              </div>
+            </div>
+            <p class="text-success small mt-3 mb-0">
+              <i class="fas fa-arrow-up me-1"></i>+120 tháng này
+            </p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="text-muted small fw-bold mb-1">SÁCH ĐANG MƯỢN</p>
+                <h3 class="fw-bold mb-0">842</h3>
+              </div>
+              <div class="icon-shape bg-warning bg-opacity-10 text-warning">
+                <i class="fas fa-hand-holding-book"></i>
+              </div>
+            </div>
+            <p class="text-muted small mt-3 mb-0">6.8% tổng kho</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="text-muted small fw-bold mb-1">DOANH THU THÁNG</p>
+                <h3 class="fw-bold mb-0">15.2M</h3>
+              </div>
+              <div class="icon-shape bg-success bg-opacity-10 text-success">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <p class="text-success small mt-3 mb-0">
+              <i class="fas fa-arrow-up me-1"></i>+15% so với tháng 4
+            </p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="text-muted small fw-bold mb-1">THÀNH VIÊN MỚI</p>
+                <h3 class="fw-bold mb-0">215</h3>
+              </div>
+              <div class="icon-shape bg-info bg-opacity-10 text-info">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <p class="text-info small mt-3 mb-0">Tổng: 3,450</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Sách mượn nhiều nhất -->
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm p-4 h-100">
+            <h5 class="fw-bold mb-4">Top 5 Sách mượn nhiều nhất</h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Hạng</th>
+                    <th>Tên sách</th>
+                    <th>Thể loại</th>
+                    <th class="text-center">Số lượt mượn</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="book-rank rank-1">1</span></td>
+                    <td class="fw-semibold">Lập trình Node.js nâng cao</td>
+                    <td>Công nghệ thông tin</td>
+                    <td class="text-center fw-bold text-primary">152</td>
+                  </tr>
+                  <tr>
+                    <td><span class="book-rank rank-2">2</span></td>
+                    <td class="fw-semibold">Cấu trúc dữ liệu & Giải thuật</td>
+                    <td>Giáo dục</td>
+                    <td class="text-center fw-bold text-primary">128</td>
+                  </tr>
+                  <tr>
+                    <td><span class="book-rank rank-3">3</span></td>
+                    <td class="fw-semibold">Tư duy kinh tế học</td>
+                    <td>Kinh tế</td>
+                    <td class="text-center fw-bold text-primary">95</td>
+                  </tr>
+                  <tr>
+                    <td><span class="book-rank">4</span></td>
+                    <td class="fw-semibold">Clean Code</td>
+                    <td>Công nghệ thông tin</td>
+                    <td class="text-center fw-bold text-primary">84</td>
+                  </tr>
+                  <tr>
+                    <td><span class="book-rank">5</span></td>
+                    <td class="fw-semibold">Lịch sử văn minh thế giới</td>
+                    <td>Văn học</td>
+                    <td class="text-center fw-bold text-primary">72</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Báo cáo Doanh thu (Biểu đồ) -->
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm p-4 h-100 text-center">
+            <h5 class="fw-bold mb-4">Cơ cấu doanh thu tháng 5</h5>
+            <canvas id="revenueChart" style="max-height: 250px"></canvas>
+            <div class="mt-4 text-start small text-muted">
+              <div class="d-flex justify-content-between mb-1">
+                <span>Phí phạt trễ hạn:</span>
+                <span class="fw-bold text-dark">8,450,000 VNĐ</span>
+              </div>
+              <div class="d-flex justify-content-between mb-1">
+                <span>Lệ phí làm thẻ mới:</span>
+                <span class="fw-bold text-dark">5,250,000 VNĐ</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Phí gia hạn/khác:</span>
+                <span class="fw-bold text-dark">1,500,000 VNĐ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sách tồn kho / Cần bổ sung -->
+        <div class="col-12 mt-4">
+          <div class="card border-0 shadow-sm p-4">
+            <h5 class="fw-bold mb-4">Tình trạng tồn kho (Sách sắp hết)</h5>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light">
+                  <h6 class="small fw-bold text-muted">Sách giáo khoa</h6>
+                  <div class="progress mb-2" style="height: 8px">
+                    <div
+                      class="progress-bar bg-danger"
+                      style="width: 15%"
+                    ></div>
+                  </div>
+                  <span class="small">Cảnh báo: Còn 15% (Cần nhập thêm)</span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light">
+                  <h6 class="small fw-bold text-muted">Công nghệ thông tin</h6>
+                  <div class="progress mb-2" style="height: 8px">
+                    <div
+                      class="progress-bar bg-warning"
+                      style="width: 45%"
+                    ></div>
+                  </div>
+                  <span class="small">Ổn định: Còn 45%</span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light">
+                  <h6 class="small fw-bold text-muted">Kinh tế - Chính trị</h6>
+                  <div class="progress mb-2" style="height: 8px">
+                    <div
+                      class="progress-bar bg-success"
+                      style="width: 80%"
+                    ></div>
+                  </div>
+                  <span class="small">An toàn: Còn 80%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5 class="fw-bold mb-4 text-blue-400">CEIN LIBRARY</h5>
+            <p class="small text-secondary">
+              Hệ thống quản lý thư viện hiện đại, báo cáo số liệu chính xác giúp
+              tối ưu hóa quy trình vận hành.
+            </p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h6 class="fw-bold mb-3">Liên hệ</h6>
+            <ul class="list-unstyled small text-secondary">
+              <li class="mb-2">
+                <i class="fas fa-envelope me-2"></i> report@ceinlib.com
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-phone me-2"></i> 0903 293 430
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-5 mb-4 text-end">
+            <h6 class="fw-bold mb-3">Quản trị viên</h6>
+            <p class="small text-secondary">
+              Mọi sai lệch số liệu vui lòng báo cáo bộ phận kỹ thuật để xử lý
+              kịp thời.
+            </p>
+          </div>
+        </div>
+        <hr class="border-secondary my-4" />
+        <p class="text-center small text-secondary mb-0">
+          &copy; 2026 CEIN Library System. Thiết kế bởi Quý Nguyễn.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Setup Chart.js for Revenue
+      const ctx = document.getElementById("revenueChart").getContext("2d");
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Phí phạt", "Lệ phí thẻ", "Phí khác"],
+          datasets: [
+            {
+              data: [55, 35, 10],
+              backgroundColor: ["#0d6efd", "#fd7e14", "#198754"],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: { position: "bottom" },
+          },
+          cutout: "70%",
+        },
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
