@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,8 +54,9 @@
                 </div>
                 <div class="list-group list-group-flush">
                     <a href="#" class="list-group-item list-group-item-action border-0 active rounded mb-1">Đang mượn</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0 rounded mb-1">Lịch sử mượn trả</a>
-                    <a href="#" class="list-group-item list-group-item-action border-0 rounded mb-1">Yêu cầu đăng ký thẻ</a>
+                    <a href="borrow-history.html" class="list-group-item list-group-item-action border-0 rounded mb-1">Lịch sử mượn trả</a>
+                    <a href="my-requests.html" class="list-group-item list-group-item-action border-0 rounded mb-1">Yêu cầu</a>
+                    <a href="profile.html" class="list-group-item list-group-item-action border-0 rounded mb-1">Thông tin cá nhân</a>
                     <a href="#" class="list-group-item list-group-item-action border-0 rounded text-danger">Đăng xuất</a>
                 </div>
             </div>
@@ -81,7 +82,16 @@
                             <td>01/05/2026</td>
                             <td>15/05/2026</td>
                             <td><span class="badge bg-warning text-dark">Còn 11 ngày</span></td>
-                            <td><button class="btn btn-sm btn-link text-decoration-none">Gia hạn</button></td>
+                            <td>
+                                <button 
+                                    class="btn btn-sm btn-link text-decoration-none"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#renewModal"
+                                    data-book-title="Cấu trúc dữ liệu & Giải thuật"
+                                    data-current-due="2026-05-15">
+                                    Gia hạn
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -89,5 +99,99 @@
         </div>
     </div>
 </div>
+
+<!-- Renew Modal -->
+<div class="modal fade" id="renewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Gia hạn thời gian mượn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <form id="renewForm">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Tên sách</label>
+                        <input type="text" class="form-control" id="renewBookTitle" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Hạn trả hiện tại</label>
+                        <input type="text" class="form-control" id="renewCurrentDue" readonly>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small text-muted">Gia hạn đến ngày</label>
+                        <input type="date" class="form-control" id="renewNewDue" required>
+                        <div class="form-text">Chọn ngày trả mới (phải sau hạn hiện tại).</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="renewSubmitBtn">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const renewModalEl = document.getElementById('renewModal');
+    const renewBookTitle = document.getElementById('renewBookTitle');
+    const renewCurrentDue = document.getElementById('renewCurrentDue');
+    const renewNewDue = document.getElementById('renewNewDue');
+    const renewSubmitBtn = document.getElementById('renewSubmitBtn');
+
+    const formatVNDate = (isoDate) => {
+        // iso: YYYY-MM-DD
+        const [y, m, d] = isoDate.split('-');
+        return `${d}/${m}/${y}`;
+    };
+
+    renewModalEl.addEventListener('show.bs.modal', (e) => {
+        const btn = e.relatedTarget;
+        const title = btn.dataset.bookTitle || '';
+        const currentDueIso = btn.dataset.currentDue || '';
+
+        renewBookTitle.value = title;
+        renewCurrentDue.value = currentDueIso ? formatVNDate(currentDueIso) : '';
+
+        // reset new due
+        renewNewDue.value = '';
+        if (currentDueIso) {
+            const nextDay = new Date(currentDueIso + 'T00:00:00');
+            nextDay.setDate(nextDay.getDate() + 1);
+            const yyyy = nextDay.getFullYear();
+            const mm = String(nextDay.getMonth() + 1).padStart(2, '0');
+            const dd = String(nextDay.getDate()).padStart(2, '0');
+            renewNewDue.min = `${yyyy}-${mm}-${dd}`;
+        }
+
+        renewSubmitBtn.disabled = false;
+    });
+
+    renewSubmitBtn.addEventListener('click', () => {
+        const newDue = renewNewDue.value;
+        if (!newDue) {
+            alert('Vui lòng chọn ngày gia hạn.');
+            return;
+        }
+
+        // Simple compare using ISO min; requires currentDueIso set via min
+        const minIso = renewNewDue.min;
+        if (minIso && newDue < minIso) {
+            alert('Ngày gia hạn phải sau hạn trả hiện tại.');
+            return;
+        }
+
+        const confirmed = confirm(`Xác nhận gửi yêu cầu gia hạn đến ngày ${formatVNDate(newDue)}?`);
+        if (!confirmed) return;
+
+        alert('Yêu cầu gia hạn đã được gửi, vui lòng chờ duyệt.');
+
+        const modalInstance = bootstrap.Modal.getInstance(renewModalEl);
+        modalInstance.hide();
+    });
+</script>
 </body>
 </html>
