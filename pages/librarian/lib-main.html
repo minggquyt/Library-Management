@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê - Thư Viện Số</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+        footer { background-color: #212529; color: white; padding: 40px 0; }
+        
+        /* Style riêng cho phần Thống kê */
+        .card-stat { transition: transform 0.2s; border: none; }
+        .card-stat:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .icon-lg { font-size: 2.5rem; opacity: 0.8; }
+        .nav-tabs .nav-link.active { font-weight: bold; color: #0d6efd; border-bottom: 3px solid #0d6efd; background-color: transparent;}
+        .nav-tabs .nav-link { color: #495057; border: none; padding: 1rem 1.5rem;}
+        .nav-tabs .nav-link:hover { border-bottom: 3px solid #dee2e6; }
+        .dashboard-container { min-height: 60vh; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar Đã Đăng Nhập -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-book-reader me-2"></i>IUH LIBRARY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#search-section">Tra cứu sách</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Tin tức</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Báo cáo thống kê</a></li>
+                </ul>
+                
+                <!-- Khu vực User Profile -->
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- Dùng UI Avatars để tạo ảnh đại diện chữ cái đầu -->
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0d6efd&color=fff" alt="Admin" width="35" height="35" class="rounded-circle me-2 shadow-sm">
+                        <span class="fw-semibold text-dark">Quản trị viên</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="dropdownUser">
+                        <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2 text-secondary"></i>Hồ sơ cá nhân</a></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2 text-secondary"></i>Cài đặt hệ thống</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger fw-bold" href="#"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- NỘI DUNG CHÍNH: BÁO CÁO THỐNG KÊ -->
+    <main class="container my-5 dashboard-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark"><i class="fas fa-chart-line text-primary me-2"></i>Báo Cáo Quản Trị</h2>
+            <button class="btn btn-outline-secondary"><i class="fas fa-download me-2"></i>Xuất báo cáo</button>
+        </div>
+
+        <!-- Tổng quan (Overview Cards) -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card card-stat bg-primary text-white shadow-sm h-100 rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-semibold mb-2 opacity-75">Sách Đang Mượn</h6>
+                            <h2 class="mb-0 fw-bold">1,245</h2>
+                        </div>
+                        <i class="fas fa-book-reader icon-lg"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card card-stat bg-success text-white shadow-sm h-100 rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-semibold mb-2 opacity-75">Sách Tồn Kho</h6>
+                            <h2 class="mb-0 fw-bold">8,530</h2>
+                        </div>
+                        <i class="fas fa-layer-group icon-lg"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card card-stat bg-warning text-dark shadow-sm h-100 rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-semibold mb-2 opacity-75">Sách Trễ Hạn</h6>
+                            <h2 class="mb-0 fw-bold">42</h2>
+                        </div>
+                        <i class="fas fa-exclamation-triangle icon-lg"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card card-stat bg-danger text-white shadow-sm h-100 rounded-3">
+                    <div class="card-body d-flex justify-content-between align-items-center p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-semibold mb-2 opacity-75">Sách Thất Lạc</h6>
+                            <h2 class="mb-0 fw-bold">15</h2>
+                        </div>
+                        <i class="fas fa-search-minus icon-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Content -->
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white pt-0 pb-0 border-bottom px-0">
+                <ul class="nav nav-tabs border-bottom-0 px-3" id="reportTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#muon-nhieu" type="button" role="tab"><i class="fas fa-fire me-2 text-danger"></i>Mượn nhiều</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ton-kho" type="button" role="tab"><i class="fas fa-boxes me-2 text-success"></i>Tồn kho</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#doanh-thu" type="button" role="tab"><i class="fas fa-coins me-2 text-warning"></i>Doanh thu</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tre-han" type="button" role="tab"><i class="fas fa-clock me-2 text-danger"></i>Trễ hạn</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#that-lac" type="button" role="tab"><i class="fas fa-question-circle me-2 text-secondary"></i>Thất lạc</button>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card-body p-4">
+                <div class="tab-content" id="reportTabsContent">
+                    
+                    <!-- 1. Thống kê sách mượn nhiều -->
+                    <div class="tab-pane fade show active" id="muon-nhieu" role="tabpanel">
+                        <h5 class="mb-4 fw-bold">Top 5 sách được mượn nhiều nhất tháng</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Mã Sách</th>
+                                        <th>Tên Sách</th>
+                                        <th>Thể Loại</th>
+                                        <th class="text-center">Số Lượt Mượn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="text-center">1</td><td class="fw-semibold">B001</td><td>Data Structures and Algorithms in Python</td><td>Giáo trình IT</td><td class="text-center"><span class="badge bg-primary rounded-pill px-3">150</span></td></tr>
+                                    <tr><td class="text-center">2</td><td class="fw-semibold">B045</td><td>Clean Code</td><td>Giáo trình IT</td><td class="text-center"><span class="badge bg-primary rounded-pill px-3">120</span></td></tr>
+                                    <tr><td class="text-center">3</td><td class="fw-semibold">L012</td><td>Đắc Nhân Tâm</td><td>Kỹ năng sống</td><td class="text-center"><span class="badge bg-primary rounded-pill px-3">95</span></td></tr>
+                                    <tr><td class="text-center">4</td><td class="fw-semibold">L088</td><td>Nhà Giả Kim</td><td>Tiểu thuyết</td><td class="text-center"><span class="badge bg-primary rounded-pill px-3">80</span></td></tr>
+                                    <tr><td class="text-center">5</td><td class="fw-semibold">B092</td><td>Database System Concepts</td><td>Giáo trình IT</td><td class="text-center"><span class="badge bg-primary rounded-pill px-3">76</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. Thống kê sách tồn kho -->
+                    <div class="tab-pane fade" id="ton-kho" role="tabpanel">
+                        <div class="row align-items-center">
+                            <div class="col-md-5 mb-4 mb-md-0 text-center">
+                                <canvas id="inventoryChart" style="max-height: 280px;"></canvas>
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="mb-4 fw-bold">Chi tiết theo danh mục</h5>
+                                <div class="list-group list-group-flush border rounded">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div><i class="fas fa-circle text-primary me-2 small"></i>Giáo trình Công nghệ thông tin</div>
+                                        <span class="fw-bold">3,200 cuốn</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div><i class="fas fa-circle text-success me-2 small"></i>Sách Kinh tế - Quản trị</div>
+                                        <span class="fw-bold">2,150 cuốn</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div><i class="fas fa-circle text-warning me-2 small"></i>Văn học - Tiểu thuyết</div>
+                                        <span class="fw-bold">1,800 cuốn</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div><i class="fas fa-circle text-danger me-2 small"></i>Tạp chí khoa học</div>
+                                        <span class="fw-bold">1,380 cuốn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Thống kê doanh thu -->
+                    <div class="tab-pane fade" id="doanh-thu" role="tabpanel">
+                        <h5 class="mb-4 fw-bold">Doanh thu (Phí làm thẻ & Phạt) - 6 Tháng gần nhất</h5>
+                        <canvas id="revenueChart" style="max-height: 350px; width: 100%;"></canvas>
+                    </div>
+
+                    <!-- 4. Báo cáo sách trễ hạn -->
+                    <div class="tab-pane fade" id="tre-han" role="tabpanel">
+                        <h5 class="mb-4 fw-bold text-danger">Danh sách đang mượn quá hạn</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã Phiếu</th>
+                                        <th>Người Mượn</th>
+                                        <th>Tên Sách</th>
+                                        <th>Hạn Trả</th>
+                                        <th class="text-center">Số Ngày Trễ</th>
+                                        <th>Tiền Phạt</th>
+                                        <th class="text-center">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="fw-semibold">PM1023</td><td>Nguyễn Văn A</td><td>Thiết kế cơ sở dữ liệu</td><td>01/05/2026</td><td class="text-center text-danger fw-bold">3</td><td class="text-danger">15,000 đ</td><td class="text-center"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-envelope me-1"></i>Nhắc nhở</button></td></tr>
+                                    <tr><td class="fw-semibold">PM1045</td><td>Trần Thị B</td><td>Lập trình Node.js</td><td>28/04/2026</td><td class="text-center text-danger fw-bold">6</td><td class="text-danger">30,000 đ</td><td class="text-center"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-envelope me-1"></i>Nhắc nhở</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 5. Báo cáo sách thất lạc -->
+                    <div class="tab-pane fade" id="that-lac" role="tabpanel">
+                        <h5 class="mb-4 fw-bold text-secondary">Danh sách báo mất / thất lạc</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã Sách</th>
+                                        <th>Tên Sách</th>
+                                        <th>Ngày Báo Mất</th>
+                                        <th>Người Báo Cáo</th>
+                                        <th class="text-center">Trạng Thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="fw-semibold">B099</td><td>Nhập môn Công nghệ phần mềm</td><td>15/04/2026</td><td>Lê Văn C</td><td class="text-center"><span class="badge bg-warning text-dark px-2 py-1">Chờ đền bù</span></td></tr>
+                                    <tr><td class="fw-semibold">L211</td><td>Tâm lý học hành vi</td><td>10/04/2026</td><td>Thủ thư</td><td class="text-center"><span class="badge bg-secondary px-2 py-1">Đã hủy mã</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-4 text-blue-400">CEIN LIBRARY</h5>
+                    <p class="small text-secondary">Hệ thống quản lý thư viện hiện đại, kết nối tri thức đến mọi người dùng một cách nhanh chóng và chính xác.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold mb-3">Dịch vụ</h6>
+                    <ul class="list-unstyled small text-secondary">
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Mượn sách</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Làm thẻ</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Tra cứu</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Liên hệ</h6>
+                    <ul class="list-unstyled small text-secondary">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, TP. Hồ Chí Minh</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> 0903 293 430</li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> support@ceinlib.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Thủ thư & Admin</h6>
+                    <a href="#" class="btn btn-sm btn-outline-light w-100 mb-2 text-start"><i class="fas fa-user-shield me-2"></i> Quản trị hệ thống</a>
+                    <a href="#" class="btn btn-sm btn-outline-light w-100 text-start"><i class="fas fa-user-tie me-2"></i> Nghiệp vụ Thủ thư</a>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <p class="text-center small text-secondary mb-0">&copy; 2026 CEIN Library System. Thiết kế bởi Quý Nguyễn.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script vẽ biểu đồ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Biểu đồ Tồn Kho (Doughnut Chart)
+            const ctxInventory = document.getElementById('inventoryChart').getContext('2d');
+            new Chart(ctxInventory, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Giáo trình IT', 'Kinh tế', 'Văn học', 'Tạp chí'],
+                    datasets: [{
+                        data: [3200, 2150, 1800, 1380],
+                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false } 
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // 2. Biểu đồ Doanh Thu (Bar Chart)
+            const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctxRevenue, {
+                type: 'bar',
+                data: {
+                    labels: ['Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4'],
+                    datasets: [
+                        {
+                            label: 'Phí làm thẻ (VNĐ)',
+                            data: [1500000, 1200000, 2500000, 800000, 1100000, 950000],
+                            backgroundColor: '#0d6efd',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Phạt trễ hạn/Đền bù (VNĐ)',
+                            data: [450000, 320000, 500000, 600000, 420000, 750000],
+                            backgroundColor: '#dc3545',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            grid: { borderDash: [5, 5] }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
