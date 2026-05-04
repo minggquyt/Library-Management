@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duyệt Thẻ Đọc - Thư Viện Số</title>
+    <title>Duyệt Mượn Sách - Thư Viện Số</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome (Icons) -->
@@ -29,9 +29,9 @@
 </head>
 <body>
 
-    <!-- Toast Notifications -->
+    <!-- Toast Notifications (Góc phải trên cùng) -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body" id="toastMessage">
                     Thao tác thành công!
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <!-- Navbar Đã Đăng Nhập -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-book-reader me-2"></i>IUH LIBRARY</a>
@@ -51,8 +51,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="#">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Quản lý sách</a></li>
-                    <li class="nav-item"><a class="nav-link active fw-bold text-primary" href="#">Duyệt thẻ đọc</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold text-primary" href="#">Duyệt mượn sách</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Quản lý độc giả</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Báo cáo thống kê</a></li>
                 </ul>
                 
@@ -71,166 +71,156 @@
         </div>
     </nav>
 
-    <!-- NỘI DUNG CHÍNH -->
+    <!-- NỘI DUNG CHÍNH: DUYỆT MƯỢN SÁCH -->
     <main class="container my-5 dashboard-container">
         
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold text-dark mb-1"><i class="fas fa-id-card text-primary me-2"></i>Duyệt Yêu Cầu Đăng Ký Thẻ</h2>
-                <p class="text-muted mb-0">Xét duyệt hồ sơ tạo thẻ thư viện trực tuyến. Kiểm tra kỹ thông tin thanh toán và CCCD.</p>
+                <h2 class="fw-bold text-dark mb-1"><i class="fas fa-shopping-basket text-primary me-2"></i>Duyệt Yêu Cầu Mượn Sách</h2>
+                <p class="text-muted mb-0">Xử lý các đơn đặt mượn sách trực tuyến. Hệ thống tự động kiểm tra kho và trạng thái độc giả.</p>
             </div>
             <button class="btn btn-primary"><i class="fas fa-sync-alt me-2"></i>Làm mới</button>
-        </div>
-
-        <!-- Filter -->
-        <div class="filter-bar shadow-sm border p-3 mb-4 d-flex flex-wrap gap-3 align-items-center">
-            <div class="flex-grow-1">
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" class="form-control border-start-0 bg-light" placeholder="Tìm theo mã YC, tên hoặc số CCCD...">
-                </div>
-            </div>
-            <select class="form-select w-auto">
-                <option value="all">Tất cả trạng thái</option>
-                <option value="paid" selected>Đã thanh toán (Cần duyệt)</option>
-                <option value="unpaid">Chưa thanh toán</option>
-            </select>
         </div>
 
         <!-- Bảng danh sách yêu cầu -->
         <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
             <div class="table-responsive">
-                <table class="table table-hover table-custom align-middle mb-0">
+                <table class="table table-hover table-custom align-middle mb-0" id="borrowTable">
                     <thead class="border-bottom">
                         <tr>
-                            <th class="ps-4">Mã YC</th>
-                            <th>Người Đăng Ký</th>
-                            <th>CCCD / CMND</th>
-                            <th>Ngày Gửi</th>
-                            <th class="text-center">Thanh Toán</th>
+                            <th class="ps-4">Mã Phiếu</th>
+                            <th>Thông tin Độc giả</th>
+                            <th>Sách Yêu Cầu</th>
+                            <th>Ngày Lấy (Dự kiến)</th>
+                            <th class="text-center">Trạng Thái Kho</th>
                             <th class="text-center pe-4">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dòng 1: Đủ điều kiện duyệt -->
-                        <tr data-req-id="REQ-10024" data-name="Trần Lê Huy" data-cccd="079099123456" data-email="huy.tran@gmail.com" data-phone="0988 123 456">
-                            <td class="ps-4 fw-semibold text-primary req-id">#REQ-10024</td>
+                        <!-- Trường hợp 1: Đủ điều kiện duyệt -->
+                        <tr data-req-id="BR-5012" data-reader-name="Nguyễn Văn A" data-book-name="Cấu trúc dữ liệu và giải thuật" data-date="05/05/2026">
+                            <td class="ps-4 fw-semibold text-primary req-id">#BR-5012</td>
                             <td>
-                                <div class="fw-bold text-dark reader-name">Trần Lê Huy</div>
-                                <div class="small text-muted"><i class="fas fa-envelope me-1"></i>huy.tran@gmail.com</div>
-                                <div class="small text-muted"><i class="fas fa-phone me-1"></i>0988 123 456</div>
+                                <div class="fw-bold text-dark reader-name">Nguyễn Văn A</div>
+                                <div class="small text-muted mb-1">Mã thẻ: TV-0921</div>
+                                <div class="small"><span class="badge bg-light text-dark border">Đang mượn: 1</span> <span class="badge bg-light text-dark border">Quá hạn: 0</span></div>
                             </td>
-                            <td class="fw-semibold">079099123456</td>
-                            <td>04/05/2026<br><small class="text-muted">14:30 PM</small></td>
-                            <td class="text-center">
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2">
-                                    <i class="fas fa-check-circle me-1"></i> Đã thanh toán (Momo)
-                                </span>
+                            <td>
+                                <div class="fw-semibold">Cấu trúc dữ liệu và giải thuật</div>
+                                <div class="small text-muted">Mã sách: B001</div>
                             </td>
+                            <td>05/05/2026</td>
+                            <td class="text-center"><span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill">Sẵn có (5)</span></td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm btn-success action-btn btn-approve" title="Duyệt sinh thẻ"><i class="fas fa-check me-1"></i> Duyệt</button>
+                                    <button class="btn btn-sm btn-success action-btn btn-approve" title="Duyệt"><i class="fas fa-check me-1"></i> Duyệt</button>
                                     <button class="btn btn-sm btn-outline-danger action-btn btn-reject" title="Từ chối"><i class="fas fa-times me-1"></i> Từ chối</button>
                                 </div>
                             </td>
                         </tr>
 
-                        <!-- Dòng 2: Chưa thanh toán -> Khóa nút duyệt -->
-                        <tr data-req-id="REQ-10025" data-name="Nguyễn Thị Mai" data-cccd="001199654321">
-                            <td class="ps-4 fw-semibold text-primary req-id">#REQ-10025</td>
+                        <!-- Trường hợp 2: Hết sách trong kho -> Khóa nút duyệt -->
+                        <tr data-req-id="BR-5013" data-reader-name="Trần Thị B" data-book-name="Lập trình Node.js thực chiến" data-date="06/05/2026">
+                            <td class="ps-4 fw-semibold text-primary req-id">#BR-5013</td>
                             <td>
-                                <div class="fw-bold text-dark reader-name">Nguyễn Thị Mai</div>
-                                <div class="small text-muted"><i class="fas fa-envelope me-1"></i>mai.ng@yahoo.com</div>
-                                <div class="small text-muted"><i class="fas fa-phone me-1"></i>0901 987 654</div>
+                                <div class="fw-bold text-dark reader-name">Trần Thị B</div>
+                                <div class="small text-muted mb-1">Mã thẻ: TV-0844</div>
+                                <div class="small"><span class="badge bg-light text-dark border">Đang mượn: 0</span> <span class="badge bg-light text-dark border">Quá hạn: 0</span></div>
                             </td>
-                            <td class="fw-semibold">001199654321</td>
-                            <td>04/05/2026<br><small class="text-muted">09:15 AM</small></td>
-                            <td class="text-center">
-                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning rounded-pill px-3 py-2 text-dark">
-                                    <i class="fas fa-clock me-1"></i> Chờ thanh toán
-                                </span>
+                            <td>
+                                <div class="fw-semibold text-danger">Lập trình Node.js thực chiến</div>
+                                <div class="small text-muted">Mã sách: B045</div>
                             </td>
+                            <td>06/05/2026</td>
+                            <td class="text-center"><span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill">Hết sách (0)</span></td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <!-- Nút duyệt bị disabled vì nghiệp vụ yêu cầu thanh toán trước -->
-                                    <button class="btn btn-sm btn-secondary opacity-50" disabled title="Chưa thanh toán, không thể duyệt"><i class="fas fa-check me-1"></i> Duyệt</button>
-                                    <button class="btn btn-sm btn-outline-danger action-btn btn-reject" title="Từ chối/Hủy"><i class="fas fa-times me-1"></i> Từ chối</button>
+                                    <button class="btn btn-sm btn-secondary action-btn opacity-50" disabled title="Không thể duyệt do hết sách"><i class="fas fa-check me-1"></i> Duyệt</button>
+                                    <button class="btn btn-sm btn-outline-danger action-btn btn-reject" title="Từ chối"><i class="fas fa-times me-1"></i> Từ chối</button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Trường hợp 3: Độc giả đang có sách quá hạn -> Cảnh báo -->
+                        <tr class="table-warning" data-req-id="BR-5014" data-reader-name="Lê Văn C" data-book-name="Hệ quản trị cơ sở dữ liệu" data-date="07/05/2026">
+                            <td class="ps-4 fw-semibold text-primary req-id">#BR-5014</td>
+                            <td>
+                                <div class="fw-bold text-dark reader-name">Lê Văn C</div>
+                                <div class="small text-muted mb-1">Mã thẻ: TV-1022</div>
+                                <div class="small"><span class="badge bg-light text-dark border">Đang mượn: 3</span> <span class="badge bg-danger">Quá hạn: 1</span></div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">Hệ quản trị cơ sở dữ liệu</div>
+                                <div class="small text-muted">Mã sách: B092</div>
+                            </td>
+                            <td>07/05/2026</td>
+                            <td class="text-center"><span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill">Sẵn có (2)</span></td>
+                            <td class="text-center pe-4">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-warning action-btn btn-approve" title="Duyệt (Có rủi ro)"><i class="fas fa-exclamation-triangle me-1"></i> Duyệt</button>
+                                    <button class="btn btn-sm btn-outline-danger action-btn btn-reject" title="Từ chối"><i class="fas fa-times me-1"></i> Từ chối</button>
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <!-- Phân trang -->
-            <div class="card-footer bg-white py-3 border-top d-flex justify-content-between align-items-center">
-                <span class="text-muted small">Hiển thị 1 đến 2 trong số 15 yêu cầu</span>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-                </ul>
-            </div>
         </div>
     </main>
 
-    <!-- ================= MODAL XÁC NHẬN CẤP THẺ ================= -->
-    <div class="modal fade" id="approveCardModal" tabindex="-1" aria-hidden="true">
+    <!-- ================= MODAL XÁC NHẬN DUYỆT ================= -->
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-success text-white border-0">
-                    <h5 class="modal-title fw-bold"><i class="fas fa-id-badge me-2"></i>Xác Nhận Cấp Thẻ Bạn Đọc</h5>
+                    <h5 class="modal-title fw-bold"><i class="fas fa-check-circle me-2"></i>Xác Nhận Duyệt Phiếu</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4 bg-light">
-                    <p class="mb-3">Bạn đang duyệt cấp thẻ cho sinh viên/độc giả:</p>
-                    <div class="bg-white p-3 rounded shadow-sm border mb-3">
-                        <p class="mb-2">Họ và tên: <strong id="apprName" class="text-primary"></strong></p>
-                        <p class="mb-2">CCCD: <strong id="apprCccd"></strong></p>
-                        <p class="mb-0">Mã YC: <span id="apprReqId" class="text-muted"></span></p>
+                    <div class="bg-white p-3 rounded shadow-sm border">
+                        <p class="mb-2">Mã phiếu: <strong id="apprReqId" class="text-primary"></strong></p>
+                        <p class="mb-2">Độc giả: <strong id="apprReaderName"></strong></p>
+                        <p class="mb-2">Sách: <strong id="apprBookName" class="text-success"></strong></p>
+                        <hr>
+                        <p class="mb-2 text-muted small"><i class="fas fa-calendar-alt me-2"></i>Ngày độc giả hẹn lấy: <span id="apprPickupDate" class="fw-bold text-dark"></span></p>
+                        <p class="mb-0 text-muted small"><i class="fas fa-calendar-check me-2"></i>Hạn trả dự kiến (+14 ngày): <span id="apprReturnDate" class="fw-bold text-danger"></span></p>
                     </div>
-                    <div class="alert alert-success bg-success bg-opacity-10 border-success mb-0">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-cog fa-spin text-success me-2"></i>
-                            <strong>Hệ thống sẽ cấp thẻ với thông tin:</strong>
-                        </div>
-                        <p class="mb-1 ms-4 small">Mã thẻ mới: <strong class="text-success" id="generatedCardId"></strong></p>
-                        <p class="mb-0 ms-4 small">Ngày hết hạn: <strong class="text-danger" id="cardExpiryDate"></strong> (1 năm kể từ hôm nay)</p>
+                    <div class="mt-3 text-center small text-muted">
+                        *Hệ thống sẽ gửi email thông báo mã số lấy sách đến độc giả và tự động trừ số lượng sách tồn kho.
                     </div>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
-                    <button type="button" class="btn btn-success fw-bold" id="confirmApproveBtn">Xác nhận cấp thẻ</button>
+                    <button type="button" class="btn btn-success fw-bold" id="confirmApproveBtn">Xác nhận duyệt</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ================= MODAL TỪ CHỐI ================= -->
-    <div class="modal fade" id="rejectCardModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-danger text-white border-0">
-                    <h5 class="modal-title fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Từ chối cấp thẻ</h5>
+                    <h5 class="modal-title fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Từ chối yêu cầu</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="mb-3">Đang xử lý từ chối YC: <strong id="rejReqId" class="text-primary"></strong> của <strong id="rejName"></strong>.</p>
+                    <p class="mb-3">Đang xử lý từ chối phiếu: <strong id="modalReqId" class="text-primary"></strong> của <strong id="modalReaderName"></strong>.</p>
                     <form id="rejectForm">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Lý do từ chối hồ sơ <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Lý do từ chối (Nghiệp vụ) <span class="text-danger">*</span></label>
                             <select class="form-select" id="rejectReasonSelect" required>
                                 <option value="" disabled selected>-- Chọn lý do --</option>
-                                <option value="Thông tin CCCD không khớp hoặc bị mờ">Thông tin CCCD không khớp hoặc bị mờ</option>
-                                <option value="Giao dịch thanh toán thất bại/Đã hoàn tiền">Giao dịch thanh toán thất bại/Đã hoàn tiền</option>
-                                <option value="Sinh viên đã có thẻ thư viện còn hạn">Sinh viên đã có thẻ thư viện còn hạn</option>
-                                <option value="Nghi ngờ giả mạo hồ sơ">Nghi ngờ giả mạo hồ sơ</option>
+                                <option value="Sách thực tế trong kho đã hư hỏng/thất lạc">Sách thực tế trong kho đã hư hỏng/thất lạc</option>
+                                <option value="Độc giả đang có sách mượn quá hạn chưa trả">Độc giả đang có sách mượn quá hạn chưa trả</option>
+                                <option value="Thẻ bạn đọc đã hết hạn hoặc bị khóa">Thẻ bạn đọc đã hết hạn hoặc bị khóa</option>
                                 <option value="Khác">Lý do khác...</option>
                             </select>
                         </div>
                         <div class="mb-3" id="otherReasonDiv" style="display: none;">
                             <label class="form-label fw-semibold">Chi tiết lý do <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="rejectReasonText" rows="3" placeholder="Nhập lý do chi tiết để thông báo qua Email cho người đăng ký..."></textarea>
+                            <textarea class="form-control" id="rejectReasonText" rows="3" placeholder="Nhập lý do gửi đến độc giả..."></textarea>
                         </div>
                     </form>
                 </div>
@@ -280,57 +270,62 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Script Logic Duyệt/Từ chối Thẻ -->
+    <!-- Script Nghiệp vụ -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let currentRow = null;
-            const approveModal = new bootstrap.Modal(document.getElementById('approveCardModal'));
-            const rejectModal = new bootstrap.Modal(document.getElementById('rejectCardModal'));
+            const approveModal = new bootstrap.Modal(document.getElementById('approveModal'));
+            const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
             const toastEl = document.getElementById('liveToast');
-            const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
 
-            function showToast(message, type = 'bg-success') {
+            // Hàm hiển thị thông báo Toast
+            function showToast(message, type = 'success') {
                 const toastBody = document.getElementById('toastMessage');
                 toastBody.innerHTML = message;
-                toastEl.className = `toast align-items-center text-white border-0 ${type}`;
+                toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
                 toast.show();
             }
 
-            // ================== LUỒNG DUYỆT CẤP THẺ ==================
+            // ================== LUỒNG DUYỆT (APPROVE) ==================
             document.querySelectorAll('.btn-approve').forEach(btn => {
                 btn.addEventListener('click', function() {
                     currentRow = this.closest('tr');
                     
+                    // Lấy dữ liệu từ Data Attributes của dòng
                     const reqId = currentRow.getAttribute('data-req-id');
-                    const name = currentRow.getAttribute('data-name');
-                    const cccd = currentRow.getAttribute('data-cccd');
+                    const readerName = currentRow.getAttribute('data-reader-name');
+                    const bookName = currentRow.getAttribute('data-book-name');
+                    const pickupDateStr = currentRow.getAttribute('data-date');
 
-                    document.getElementById('apprReqId').innerText = reqId;
-                    document.getElementById('apprName').innerText = name;
-                    document.getElementById('apprCccd').innerText = cccd;
+                    // Hiển thị lên Modal
+                    document.getElementById('apprReqId').innerText = "#" + reqId;
+                    document.getElementById('apprReaderName').innerText = readerName;
+                    document.getElementById('apprBookName').innerText = bookName;
+                    document.getElementById('apprPickupDate').innerText = pickupDateStr;
 
-                    // Mô phỏng tạo mã thẻ mới (Ví dụ: TV26 + 4 số ngẫu nhiên)
-                    const randomCode = Math.floor(1000 + Math.random() * 9000);
-                    document.getElementById('generatedCardId').innerText = `TV26-${randomCode}`;
-
-                    // Tính ngày hết hạn (1 năm sau kể từ hôm nay)
-                    const today = new Date();
-                    today.setFullYear(today.getFullYear() + 1);
-                    const expiryStr = `${today.getDate().toString().padStart(2,'0')}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getFullYear()}`;
-                    document.getElementById('cardExpiryDate').innerText = expiryStr;
+                    // Tính hạn trả dự kiến (+14 ngày theo nghiệp vụ)
+                    const parts = pickupDateStr.split('/');
+                    if(parts.length === 3) {
+                        const date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        date.setDate(date.getDate() + 14);
+                        const returnDateStr = `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
+                        document.getElementById('apprReturnDate').innerText = returnDateStr;
+                    }
 
                     approveModal.show();
                 });
             });
 
-            document.getElementById('confirmApproveBtn').addEventListener('click', function() {
+            document.getElementById('confirmApproveBtn').addEventListener('click', async function() {
                 const reqId = document.getElementById('apprReqId').innerText;
-                const newCardId = document.getElementById('generatedCardId').innerText;
                 
-                // MÔ PHỎNG GỌI API ở đây (Lưu Card xuống DB)
+                // MÔ PHỎNG GỌI API Node.js/MongoDB ở đây
+                // Ví dụ: await fetch(`/api/borrow/approve/${reqId}`, { method: 'POST' });
                 
+                // Thành công
                 approveModal.hide();
-                showToast(`<i class="fas fa-check-circle me-2"></i> Đã cấp thẻ <b>${newCardId}</b> thành công! Hệ thống đang gửi Email kèm thông tin đăng nhập cho độc giả.`, 'bg-success');
+                showToast(`<i class="fas fa-check-circle me-2"></i> Đã duyệt thành công phiếu <b>${reqId}</b>! Lịch lấy sách và hạn trả đã được cập nhật.`, 'success');
                 
                 if (currentRow) {
                     currentRow.classList.add('row-processed');
@@ -338,7 +333,7 @@
                 }
             });
 
-            // ================== LUỒNG TỪ CHỐI HỒ SƠ ==================
+            // ================== LUỒNG TỪ CHỐI (REJECT) ==================
             const reasonSelect = document.getElementById('rejectReasonSelect');
             const otherReasonDiv = document.getElementById('otherReasonDiv');
             const reasonText = document.getElementById('rejectReasonText');
@@ -356,10 +351,10 @@
                 btn.addEventListener('click', function() {
                     currentRow = this.closest('tr');
                     const reqId = currentRow.getAttribute('data-req-id');
-                    const name = currentRow.getAttribute('data-name');
+                    const readerName = currentRow.getAttribute('data-reader-name');
                     
-                    document.getElementById('rejReqId').innerText = reqId;
-                    document.getElementById('rejName').innerText = name;
+                    document.getElementById('modalReqId').innerText = "#" + reqId;
+                    document.getElementById('modalReaderName').innerText = readerName;
                     
                     document.getElementById('rejectForm').reset();
                     otherReasonDiv.style.display = 'none';
@@ -367,18 +362,21 @@
                 });
             });
 
-            document.getElementById('confirmRejectBtn').addEventListener('click', function() {
-                const reqId = document.getElementById('rejReqId').innerText;
+            document.getElementById('confirmRejectBtn').addEventListener('click', async function() {
+                const reqId = document.getElementById('modalReqId').innerText;
                 const reason = reasonSelect.value;
                 if (!reason || (reason === 'Khác' && reasonText.value.trim() === '')) {
-                    alert('Vui lòng chọn hoặc nhập lý do từ chối hồ sơ!');
+                    alert('Nghiệp vụ yêu cầu phải điền lý do từ chối!');
                     return;
                 }
 
-                // MÔ PHỎNG GỌI API ở đây
+                // MÔ PHỎNG GỌI API Node.js/MongoDB
+                const finalReason = reason === 'Khác' ? reasonText.value : reason;
+                // await fetch(`/api/borrow/reject/${reqId}`, { method: 'POST', body: JSON.stringify({ reason: finalReason }) });
                 
+                // Thành công
                 rejectModal.hide();
-                showToast(`<i class="fas fa-info-circle me-2"></i> Đã từ chối hồ sơ <b>${reqId}</b>. Phản hồi đã được ghi nhận.`, 'bg-secondary');
+                showToast(`<i class="fas fa-info-circle me-2"></i> Đã từ chối phiếu <b>${reqId}</b>. Email thông báo lý do đã được gửi.`, 'secondary');
 
                 if (currentRow) {
                     currentRow.classList.add('row-processed');
