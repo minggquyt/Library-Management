@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Nhân Sự - CEIN LIBRARY</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (Icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8f9fa;
+      }
+      .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      }
+      footer {
+        background-color: #212529;
+        color: white;
+        padding: 40px 0;
+      }
+
+      .admin-content {
+        min-height: 75vh;
+      }
+      .table-custom {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eef0f2;
+      }
+      .table th {
+        background-color: #f8f9fa;
+        font-weight: 700;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 15px 20px;
+      }
+      .table td {
+        vertical-align: middle;
+        padding: 12px 20px;
+        border-color: #f1f3f5;
+      }
+
+      /* Tách biệt nút thao tác */
+      .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        border: none;
+      }
+      .btn-edit {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+      }
+      .btn-edit:hover {
+        background-color: #0d6efd;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .btn-delete {
+        background-color: #fff5f5;
+        color: #dc3545;
+      }
+      .btn-delete:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .avatar-table {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .avatar-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+      }
+      .status-pill {
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        display: inline-block;
+      }
+      .bg-active {
+        background-color: #d1e7dd;
+        color: #0f5132;
+      }
+      .bg-inactive {
+        background-color: #f8d7da;
+        color: #842029;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar Admin -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+      <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold text-primary" href="#"
+          ><i class="fas fa-book-reader me-2"></i>IUH LIBRARY</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto ms-4">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Quản lý kho sách</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active fw-bold text-primary" href="#"
+                >Quản lý nhân sự</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Cấu hình tham số</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Thống kê & Báo cáo</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+              <button
+                class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 rounded-pill px-3 py-1 border-0"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  src="https://ui-avatars.com/api/?name=Quý+Nguyễn&background=fff&color=0d6efd"
+                  alt="Admin Avatar"
+                  class="avatar-circle"
+                />
+                <span class="fw-semibold small">Admin Q.Nguyễn</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                <li>
+                  <a class="dropdown-item py-2" href="#"
+                    ><i class="fas fa-user-circle me-2 text-muted"></i>Hồ sơ</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item text-danger py-2" href="#"
+                    ><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container px-4 py-5 admin-content">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-0">Hệ thống Nhân sự</h2>
+          <p class="text-muted small">
+            Quản lý đội ngũ thủ thư và quản trị viên thư viện
+          </p>
+        </div>
+        <button
+          class="btn btn-primary shadow-sm rounded-pill px-4"
+          data-bs-toggle="modal"
+          data-bs-target="#addUserModal"
+        >
+          <i class="fas fa-plus me-2"></i>Thêm nhân viên mới
+        </button>
+      </div>
+
+      <div class="table-custom">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th class="ps-4">Mã NV</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Chức vụ</th>
+                <th>Trạng thái</th>
+                <th class="text-center pe-4">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Nhân viên 1 -->
+              <tr>
+                <td class="ps-4 fw-bold text-muted">#STF001</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      src="https://ui-avatars.com/api/?name=Minh+Duc&background=0d6efd&color=fff"
+                      class="avatar-table"
+                    />
+                    <span class="fw-semibold">Phạm Minh Đức</span>
+                  </div>
+                </td>
+                <td>duc.pm@ceinlib.com</td>
+                <td>
+                  <span class="badge border border-info text-info px-3"
+                    >Thủ thư</span
+                  >
+                </td>
+                <td>
+                  <span class="status-pill bg-active">Đang làm việc</span>
+                </td>
+                <td class="text-center pe-4">
+                  <button
+                    class="btn-action btn-edit me-1"
+                    title="Chỉnh sửa"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editUserModal"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn-action btn-delete"
+                    title="Xóa nhân viên"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteUserModal"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <!-- Nhân viên 2 -->
+              <tr>
+                <td class="ps-4 fw-bold text-muted">#STF002</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      src="https://ui-avatars.com/api/?name=Hoang+Yen&background=6f42c1&color=fff"
+                      class="avatar-table"
+                    />
+                    <span class="fw-semibold">Lê Thị Hoàng Yến</span>
+                  </div>
+                </td>
+                <td>yen.lth@ceinlib.com</td>
+                <td>
+                  <span class="badge border border-info text-info px-3"
+                    >Thủ thư</span
+                  >
+                </td>
+                <td>
+                  <span class="status-pill bg-active">Đang làm việc</span>
+                </td>
+                <td class="text-center pe-4">
+                  <button class="btn-action btn-edit me-1">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <!-- Nhân viên 3 -->
+              <tr>
+                <td class="ps-4 fw-bold text-muted">#STF003</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      src="https://ui-avatars.com/api/?name=Quoc+Long&background=198754&color=fff"
+                      class="avatar-table"
+                    />
+                    <span class="fw-semibold">Trần Quốc Long</span>
+                  </div>
+                </td>
+                <td>long.tq@ceinlib.com</td>
+                <td>
+                  <span class="badge border border-primary text-primary px-3"
+                    >Quản trị viên</span
+                  >
+                </td>
+                <td>
+                  <span class="status-pill bg-inactive">Đang tạm nghỉ</span>
+                </td>
+                <td class="text-center pe-4">
+                  <button class="btn-action btn-edit me-1">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <!-- Nhân viên 4 -->
+              <tr>
+                <td class="ps-4 fw-bold text-muted">#STF004</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      src="https://ui-avatars.com/api/?name=Bao+Anh&background=fd7e14&color=fff"
+                      class="avatar-table"
+                    />
+                    <span class="fw-semibold">Nguyễn Bảo Anh</span>
+                  </div>
+                </td>
+                <td>anh.nb@ceinlib.com</td>
+                <td>
+                  <span class="badge border border-info text-info px-3"
+                    >Thủ thư</span
+                  >
+                </td>
+                <td>
+                  <span class="status-pill bg-active">Đang làm việc</span>
+                </td>
+                <td class="text-center pe-4">
+                  <button class="btn-action btn-edit me-1">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Thêm Nhân Viên -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header border-bottom pb-3">
+            <h5 class="fw-bold mb-0">Thêm nhân viên mới</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <form>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Họ và tên</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Nhập tên nhân viên..."
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Email công vụ</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="name@ceinlib.com"
+                />
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Chức vụ</label>
+                  <select class="form-select">
+                    <option value="librarian">Thủ thư</option>
+                    <option value="admin">Quản trị viên</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Mật khẩu tạm</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary w-100 py-2 fw-bold mt-2"
+              >
+                XÁC NHẬN THÊM
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Sửa Nhân Viên -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header border-bottom pb-3 bg-light">
+            <h5 class="fw-bold mb-0">Chỉnh sửa thông tin #STF001</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <form>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Họ và tên</label>
+                <input type="text" class="form-control" value="Phạm Minh Đức" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  value="duc.pm@ceinlib.com"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold"
+                  >Trạng thái làm việc</label
+                >
+                <select class="form-select">
+                  <option value="1" selected>Đang làm việc</option>
+                  <option value="0">Đang tạm nghỉ / Đã nghỉ</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-primary w-100 py-2 fw-bold">
+                LƯU THAY ĐỔI
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Xác nhận Xóa -->
+    <div
+      class="modal fade"
+      id="deleteUserModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-body text-center p-4">
+            <div class="text-danger mb-3">
+              <i class="fas fa-user-minus fa-3x"></i>
+            </div>
+            <h5 class="fw-bold">Xóa nhân viên?</h5>
+            <p class="text-muted small">
+              Tài khoản này sẽ bị thu hồi quyền truy cập hệ thống ngay lập tức.
+            </p>
+            <div class="d-flex gap-2 mt-4">
+              <button
+                type="button"
+                class="btn btn-light w-100 border"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button type="button" class="btn btn-danger w-100">Xóa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5 class="fw-bold mb-4 text-blue-400">CEIN LIBRARY</h5>
+            <p class="small text-secondary">
+              Hệ thống quản lý thư viện hiện đại, kết nối tri thức đến mọi người
+              dùng một cách nhanh chóng và chính xác.
+            </p>
+          </div>
+          <div class="col-md-2 mb-4">
+            <h6 class="fw-bold mb-3">Dịch vụ</h6>
+            <ul class="list-unstyled small text-secondary">
+              <li class="mb-2">
+                <a href="#" class="text-secondary text-decoration-none"
+                  >Mượn sách</a
+                >
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-secondary text-decoration-none"
+                  >Làm thẻ</a
+                >
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-secondary text-decoration-none"
+                  >Tra cứu</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h6 class="fw-bold mb-3">Liên hệ</h6>
+            <ul class="list-unstyled small text-secondary">
+              <li class="mb-2">
+                <i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, TP. Hồ
+                Chí Minh
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-phone me-2"></i> 0903 293 430
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-envelope me-2"></i> support@ceinlib.com
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h6 class="fw-bold mb-3">Thủ thư & Admin</h6>
+            <a
+              href="#"
+              class="btn btn-sm btn-outline-light w-100 mb-2 text-start"
+              ><i class="fas fa-user-shield me-2"></i> Quản trị hệ thống</a
+            >
+            <a href="#" class="btn btn-sm btn-outline-light w-100 text-start"
+              ><i class="fas fa-user-tie me-2"></i> Nghiệp vụ Thủ thư</a
+            >
+          </div>
+        </div>
+        <hr class="border-secondary my-4" />
+        <p class="text-center small text-secondary mb-0">
+          &copy; 2026 CEIN Library System. Thiết kế bởi Quý Nguyễn.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
